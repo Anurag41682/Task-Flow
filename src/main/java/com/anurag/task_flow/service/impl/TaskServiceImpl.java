@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.anurag.task_flow.entity.Task;
+import com.anurag.task_flow.exception.ResourceNotFoundException;
 import com.anurag.task_flow.repository.TaskRepository;
 import com.anurag.task_flow.service.TaskService;
 
@@ -26,6 +27,15 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public List<Task> getAllTasks() {
     return taskRepository.findAll();
+  }
+
+  @Override
+  public Task toggleTask(Long id) {
+    Task foundTask = taskRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+
+    foundTask.setCompleted(!foundTask.isCompleted());
+    return taskRepository.save(foundTask);
   }
 
 }

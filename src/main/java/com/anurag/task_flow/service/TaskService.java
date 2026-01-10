@@ -9,4 +9,6 @@ public interface TaskService {
 
   List<Task> getAllTasks();
 
+  Task toggleTask(Long id);
+
 }
