@@ -16,6 +16,8 @@ import com.anurag.task_flow.dto.response.UserResponse;
 import com.anurag.task_flow.entity.User;
 import com.anurag.task_flow.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -34,7 +36,7 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
+  public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
     User user = new User();
     user.setName(request.getName());
     user.setEmail(request.getEmail());

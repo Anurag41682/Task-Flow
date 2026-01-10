@@ -18,6 +18,8 @@ import com.anurag.task_flow.entity.User;
 import com.anurag.task_flow.service.TaskService;
 import com.anurag.task_flow.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -42,7 +44,7 @@ public class TaskController {
   }
 
   @PostMapping
-  public ResponseEntity<TaskResponse> createTask(@RequestBody TaskRequest request) {
+  public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest request) {
     User user = userService.getUserById(request.getUserId());
 
     Task task = new Task();
