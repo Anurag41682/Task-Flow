@@ -1,0 +1,56 @@
+package com.anurag.task_flow.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.anurag.task_flow.dto.request.UserRequest;
+import com.anurag.task_flow.dto.response.UserResponse;
+import com.anurag.task_flow.entity.User;
+import com.anurag.task_flow.service.UserService;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+  private final UserService userService;
+
+  public UserController(UserService userService) {
+    this.userService = userService;
+  }
+
+  private UserResponse mapToUserResponse(User user) {
+    UserResponse response = new UserResponse();
+    response.setEmail(user.getEmail());
+    response.setName(user.getName());
+    response.setId(user.getId());
+    return response;
+  }
+
+  @PostMapping
+  public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
+    User user = new User();
+    user.setName(request.getName());
+    user.setEmail(request.getEmail());
+
+    User savedUser = userService.createUser(user);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(mapToUserResponse(savedUser));
+  }
+
+  @GetMapping
+  public ResponseEntity<List<UserResponse>> getAllUser() {
+    List<User> allUser = userService.getAllUsers();
+    List<UserResponse> response = new ArrayList<>();
+
+    allUser.forEach(element -> response.add(mapToUserResponse(element)));
+    return ResponseEntity.ok(response);
+  }
+
+}

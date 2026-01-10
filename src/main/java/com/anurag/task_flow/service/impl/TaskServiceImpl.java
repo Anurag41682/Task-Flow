@@ -1,0 +1,31 @@
+package com.anurag.task_flow.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.anurag.task_flow.entity.Task;
+import com.anurag.task_flow.repository.TaskRepository;
+import com.anurag.task_flow.service.TaskService;
+
+@Service
+public class TaskServiceImpl implements TaskService {
+
+  private final TaskRepository taskRepository;
+
+  public TaskServiceImpl(TaskRepository taskRepository) {
+    // injected here without autowired because only one constructor is there
+    this.taskRepository = taskRepository;
+  }
+
+  @Override
+  public Task createTask(Task task) {
+    return taskRepository.save(task);
+  }
+
+  @Override
+  public List<Task> getAllTasks() {
+    return taskRepository.findAll();
+  }
+
+}
