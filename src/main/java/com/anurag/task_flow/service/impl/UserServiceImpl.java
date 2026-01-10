@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.anurag.task_flow.entity.User;
+import com.anurag.task_flow.exception.ResourceNotFoundException;
 import com.anurag.task_flow.repository.UserRepository;
 import com.anurag.task_flow.service.UserService;
 
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
   }
 
   public User getUserById(Long id) {
-    return userRepository.findById(id).orElseThrow();
+    return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
   }
 
 }
