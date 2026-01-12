@@ -3,6 +3,8 @@ package com.anurag.task_flow.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,11 @@ public class TaskController {
   private final TaskService taskService;
   private final UserService userService;
 
+  public TaskController(TaskService taskService, UserService userService) {
+    this.taskService = taskService;
+    this.userService = userService;
+  }
+
   private TaskResponse mapToResponse(Task task) {
     TaskResponse response = new TaskResponse();
     response.setId(task.getId());
@@ -38,11 +45,6 @@ public class TaskController {
     response.setStatus(task.isCompleted() ? "DONE" : "PENDING");
 
     return response;
-  }
-
-  public TaskController(TaskService taskService, UserService userService) {
-    this.taskService = taskService;
-    this.userService = userService;
   }
 
   @PostMapping
@@ -74,10 +76,16 @@ public class TaskController {
   }
 
   @PatchMapping("/{id}/status")
-
   public ResponseEntity<TaskResponse> toggleStatus(@PathVariable Long id) {
     Task updatedTask = taskService.toggleTask(id);
     return ResponseEntity.ok(mapToResponse(updatedTask));
+  }
+
+  @GetMapping("/user/{id}")
+  public ResponseEntity<List<TaskResponse>> getTasksByUser(@PathVariable Long id, Pageable pageable) {
+    Page<Task> pageContent = taskService.getTasksByUser(id, pageable);
+    List<TaskResponse> tasks = pageContent.getContent().stream().map((ele) -> mapToResponse(ele)).toList();
+    return ResponseEntity.ok(tasks);
   }
 
 }
