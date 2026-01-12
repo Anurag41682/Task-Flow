@@ -9,7 +9,7 @@ public class TaskRequest {
   @NotBlank
   private String title;
   private String description;
-  @NotBlank
+
   private String status;
 
   @NotNull
