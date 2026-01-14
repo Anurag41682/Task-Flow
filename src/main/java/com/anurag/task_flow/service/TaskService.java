@@ -10,10 +10,14 @@ import com.anurag.task_flow.entity.Task;
 public interface TaskService {
   Task createTask(Task task);
 
+  Task getTaskById(Long id);
+
   List<Task> getAllTasks();
 
   Task toggleTask(Long id);
 
   Page<Task> getTasksByUser(Long id, Pageable pageable);
+
+  Task updateTask(Task updatedTask);
 
 }

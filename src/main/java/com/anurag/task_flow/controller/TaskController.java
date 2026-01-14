@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anurag.task_flow.dto.request.TaskRequest;
+import com.anurag.task_flow.dto.request.TaskUpdateRequest;
 import com.anurag.task_flow.dto.response.TaskResponse;
 import com.anurag.task_flow.entity.Task;
 import com.anurag.task_flow.entity.User;
+import com.anurag.task_flow.exception.BadRequestException;
 import com.anurag.task_flow.service.TaskService;
 import com.anurag.task_flow.service.UserService;
 
@@ -43,6 +45,7 @@ public class TaskController {
     response.setCompleted(task.isCompleted());
     response.setUserId(task.getAssignedUser().getId());
     response.setStatus(task.isCompleted() ? "DONE" : "PENDING");
+    response.setDueDate(task.getDueDate());
 
     return response;
   }
@@ -55,6 +58,7 @@ public class TaskController {
     task.setAssignedUser(user);
     task.setTitle(request.getTitle());
     task.setDescription(request.getDescription());
+    task.setDueDate(request.getDueDate());
     task.setCompleted(false);
 
     Task savedTask = taskService.createTask(task);
@@ -65,14 +69,11 @@ public class TaskController {
   @GetMapping
   public ResponseEntity<List<TaskResponse>> getAllTask() {
     List<Task> tasks = taskService.getAllTasks();
-
     List<TaskResponse> response = new ArrayList<>();
     for (int i = 0; i < tasks.size(); i++) {
       response.add(mapToResponse(tasks.get(i)));
     }
-
     return ResponseEntity.ok(response);
-
   }
 
   @PatchMapping("/{id}/status")
@@ -88,4 +89,23 @@ public class TaskController {
     return ResponseEntity.ok(tasks);
   }
 
+  @PatchMapping("/{taskId}")
+  public ResponseEntity<TaskResponse> updateTask(@PathVariable Long taskId,
+      @RequestBody TaskUpdateRequest updatedTask) {
+    Task task = taskService.getTaskById(taskId);
+    if (updatedTask.getTitle() != null) {
+      if (updatedTask.getTitle().isBlank()) {
+        throw new BadRequestException("Title can't be blank.");
+      }
+      task.setTitle(updatedTask.getTitle());
+    }
+    if (updatedTask.getDescrption() != null) {
+      task.setDescription(updatedTask.getDescrption());
+    }
+    if (updatedTask.getDueDate() != null) {
+      task.setDueDate(updatedTask.getDueDate());
+    }
+    Task response = taskService.updateTask(task);
+    return ResponseEntity.ok(mapToResponse(response));
+  }
 }

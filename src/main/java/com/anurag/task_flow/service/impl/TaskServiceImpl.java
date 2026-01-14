@@ -30,6 +30,11 @@ public class TaskServiceImpl implements TaskService {
     return taskRepository.findAll();
   }
 
+  public Task getTaskById(Long id) {
+    return taskRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Task not found with Id: " + id));
+  }
+
   @Override
   public Task toggleTask(Long id) {
     Task foundTask = taskRepository.findById(id)
@@ -42,6 +47,11 @@ public class TaskServiceImpl implements TaskService {
   public Page<Task> getTasksByUser(Long id, Pageable page) {
     Page<Task> tasks = taskRepository.findByAssignedUserId(id, page);
     return tasks;
+  }
+
+  @Override
+  public Task updateTask(Task updatedTask) {
+    return taskRepository.save(updatedTask);
   }
 
 }
