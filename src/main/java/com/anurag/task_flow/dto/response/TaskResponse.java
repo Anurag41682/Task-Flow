@@ -1,5 +1,7 @@
 package com.anurag.task_flow.dto.response;
 
+import java.time.LocalDate;
+
 import lombok.Data;
 
 @Data
@@ -11,4 +13,5 @@ public class TaskResponse {
   private String status;
   private Boolean completed;
   private Long userId;
+  private LocalDate dueDate;
 }
