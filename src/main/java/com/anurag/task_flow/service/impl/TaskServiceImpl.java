@@ -59,8 +59,10 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public List<Task> getAllTasks() {
-    return taskRepository.findAll();
+  public List<TaskResponse> getAllTasks() {
+    List<Task> tasks = taskRepository.findAll();
+    List<TaskResponse> response = tasks.stream().map(ele -> mapToResponse(ele)).toList();
+    return response;
   }
 
   public Task getTaskById(Long id) {

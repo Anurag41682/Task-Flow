@@ -54,15 +54,10 @@ public class TaskController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  // working
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<List<TaskResponse>> getAllTask() {
-    List<Task> tasks = taskService.getAllTasks();
-    List<TaskResponse> response = new ArrayList<>();
-    for (int i = 0; i < tasks.size(); i++) {
-      response.add(mapToResponse(tasks.get(i)));
-    }
+    List<TaskResponse> response = taskService.getAllTasks();
     return ResponseEntity.ok(response);
   }
 

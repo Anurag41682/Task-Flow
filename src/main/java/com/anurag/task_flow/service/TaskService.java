@@ -16,7 +16,7 @@ public interface TaskService {
 
   Task getTaskById(Long id);
 
-  List<Task> getAllTasks();
+  List<TaskResponse> getAllTasks();
 
   Task toggleTask(Long id, CustomUserDetails customUserDetails);
 
