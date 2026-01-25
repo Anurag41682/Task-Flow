@@ -11,8 +11,6 @@ import com.anurag.task_flow.dto.request.LoginRequest;
 import com.anurag.task_flow.dto.request.SetPasswordRequest;
 import com.anurag.task_flow.dto.request.SignupRequest;
 import com.anurag.task_flow.dto.response.JwtResponse;
-import com.anurag.task_flow.entity.User;
-import com.anurag.task_flow.security.AuthResult;
 import com.anurag.task_flow.service.AuthService;
 
 @RestController
@@ -31,19 +29,10 @@ public class AuthController {
     return ResponseEntity.ok("User created successfully");
   }
 
-  // working
   @PostMapping("/login")
   ResponseEntity<JwtResponse> Login(@RequestBody LoginRequest request) {
-
-    User user = new User();
-    user.setEmail(request.getEmail());
-    user.setPassword(request.getPassword());
-    AuthResult res = authService.login(user);
-    JwtResponse response = new JwtResponse();
-    response.setEmail(res.getEmail());
-    response.setToken(res.getJwtToken());
-    response.setRole(res.getRole());
-    return ResponseEntity.ok(response);
+    JwtResponse res = authService.login(request);
+    return ResponseEntity.ok(res);
   }
 
   // working

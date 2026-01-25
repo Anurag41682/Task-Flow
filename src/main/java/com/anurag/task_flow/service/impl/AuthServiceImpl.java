@@ -8,16 +8,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.anurag.task_flow.dto.request.LoginRequest;
 import com.anurag.task_flow.dto.request.SetPasswordRequest;
 import com.anurag.task_flow.dto.request.SignupRequest;
 import com.anurag.task_flow.dto.request.UserRequest;
+import com.anurag.task_flow.dto.response.JwtResponse;
 import com.anurag.task_flow.entity.PasswordSetupToken;
 import com.anurag.task_flow.entity.Role;
 import com.anurag.task_flow.entity.User;
 import com.anurag.task_flow.exception.BadRequestException;
 import com.anurag.task_flow.repository.PasswordSetupTokenRepository;
 import com.anurag.task_flow.repository.UserRepository;
-import com.anurag.task_flow.security.AuthResult;
 import com.anurag.task_flow.security.CustomUserDetails;
 import com.anurag.task_flow.security.JwtTokenProvider;
 import com.anurag.task_flow.service.AuthService;
@@ -57,23 +58,25 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public AuthResult login(User user) {
+  public JwtResponse login(LoginRequest loginReq) {
+    // This line does authentication automatically without matching password
+    // manually
     Authentication authentication = authenticationManager
-        .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+        .authenticate(new UsernamePasswordAuthenticationToken(loginReq.getEmail(), loginReq.getPassword()));
+
     String token = jwtTokenProvider.generateToken(authentication);
 
     // UserDetailsService.loadUserByUsername() is called automatically by Spring
     // Security as part of authentication that is when
     // AuthenticationManager.authenticate() is called and that gives us this
-    // customUserDetails as a return
+    // customUserDetails from it
     CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-    AuthResult response = new AuthResult();
-    response.setEmail(customUserDetails.getUsername());
-    response.setJwtToken(token);
-    response.setRole(customUserDetails.getRole());
-    response.setUserId(customUserDetails.getUserId());
+    JwtResponse response = new JwtResponse();
 
+    response.setEmail(customUserDetails.getUsername());
+    response.setToken(token);
+    response.setRole(customUserDetails.getRole());
     return response;
   }
 
