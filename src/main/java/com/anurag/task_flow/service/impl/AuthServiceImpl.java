@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.anurag.task_flow.dto.request.LoginRequest;
 import com.anurag.task_flow.dto.request.SetPasswordRequest;
 import com.anurag.task_flow.dto.request.SignupRequest;
-import com.anurag.task_flow.dto.request.UserRequest;
 import com.anurag.task_flow.dto.response.JwtResponse;
 import com.anurag.task_flow.entity.PasswordSetupToken;
 import com.anurag.task_flow.entity.Role;
