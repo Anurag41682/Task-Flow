@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anurag.task_flow.dto.request.UserRequest;
 import com.anurag.task_flow.dto.response.UserResponse;
-import com.anurag.task_flow.entity.User;
 import com.anurag.task_flow.service.UserService;
 
 import jakarta.validation.Valid;
@@ -28,14 +27,6 @@ public class UserController {
 
   public UserController(UserService userService) {
     this.userService = userService;
-  }
-
-  private UserResponse mapToUserResponse(User user) {
-    UserResponse response = new UserResponse();
-    response.setEmail(user.getEmail());
-    response.setName(user.getName());
-    response.setId(user.getId());
-    return response;
   }
 
   @PostMapping
@@ -52,13 +43,12 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  // working
   @GetMapping("/{id}")
   // only allows the admin and the current user to use this API
   @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.getUserId()")
   public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-    User user = userService.getUserById(id);
-    return ResponseEntity.ok(mapToUserResponse(user));
+    UserResponse response = userService.getUserById(id);
+    return ResponseEntity.ok(response);
   }
 
 }
