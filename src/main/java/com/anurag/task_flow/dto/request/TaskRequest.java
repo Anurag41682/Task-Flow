@@ -12,7 +12,6 @@ public class TaskRequest {
   private String title;
   private String description;
   private LocalDate dueDate;
-  private String status;
 
   @NotNull
   private Long userId;
