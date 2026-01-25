@@ -35,7 +35,6 @@ public class AuthController {
     return ResponseEntity.ok(res);
   }
 
-  // working
   @PostMapping("/set-password")
   ResponseEntity<String> setPassword(@RequestParam String token, @RequestBody SetPasswordRequest request) {
     authService.setPassword(token, request);
