@@ -7,11 +7,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
+import com.anurag.task_flow.dto.request.TaskRequest;
 import com.anurag.task_flow.dto.request.TaskUpdateRequest;
+import com.anurag.task_flow.dto.response.TaskResponse;
 import com.anurag.task_flow.entity.Task;
+import com.anurag.task_flow.entity.User;
 import com.anurag.task_flow.exception.BadRequestException;
 import com.anurag.task_flow.exception.ResourceNotFoundException;
 import com.anurag.task_flow.repository.TaskRepository;
+import com.anurag.task_flow.repository.UserRepository;
 import com.anurag.task_flow.security.CustomUserDetails;
 import com.anurag.task_flow.service.TaskService;
 
@@ -19,15 +23,39 @@ import com.anurag.task_flow.service.TaskService;
 public class TaskServiceImpl implements TaskService {
 
   private final TaskRepository taskRepository;
+  private final UserRepository userRepository;
 
-  public TaskServiceImpl(TaskRepository taskRepository) {
+  public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository) {
     // injected here without autowired because only one constructor is there
     this.taskRepository = taskRepository;
+    this.userRepository = userRepository;
+  }
+
+  private TaskResponse mapToResponse(Task task) {
+    TaskResponse response = new TaskResponse();
+    response.setId(task.getId());
+    response.setTitle(task.getTitle());
+    response.setDescription(task.getDescription());
+    response.setCompleted(task.isCompleted());
+    response.setUserId(task.getAssignedUser().getId());
+    response.setStatus(task.isCompleted() ? "DONE" : "PENDING");
+    response.setDueDate(task.getDueDate());
+    return response;
   }
 
   @Override
-  public Task createTask(Task task) {
-    return taskRepository.save(task);
+  public TaskResponse createTask(TaskRequest taskReq) {
+    User user = userRepository.findById(taskReq.getUserId())
+        .orElseThrow(() -> new ResourceNotFoundException("User not found with id:" + taskReq.getUserId()));
+
+    Task task = new Task();
+    task.setAssignedUser(user);
+    task.setCompleted(false);
+    task.setDescription(taskReq.getDescription());
+    task.setTitle(taskReq.getTitle());
+    task.setDueDate(taskReq.getDueDate());
+    Task savedTask = taskRepository.save(task);
+    return mapToResponse(savedTask);
   }
 
   @Override

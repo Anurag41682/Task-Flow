@@ -21,10 +21,8 @@ import com.anurag.task_flow.dto.request.TaskRequest;
 import com.anurag.task_flow.dto.request.TaskUpdateRequest;
 import com.anurag.task_flow.dto.response.TaskResponse;
 import com.anurag.task_flow.entity.Task;
-import com.anurag.task_flow.entity.User;
 import com.anurag.task_flow.security.CustomUserDetails;
 import com.anurag.task_flow.service.TaskService;
-import com.anurag.task_flow.service.UserService;
 
 import jakarta.validation.Valid;
 
@@ -32,11 +30,9 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/tasks")
 public class TaskController {
   private final TaskService taskService;
-  private final UserService userService;
 
-  public TaskController(TaskService taskService, UserService userService) {
+  public TaskController(TaskService taskService) {
     this.taskService = taskService;
-    this.userService = userService;
   }
 
   private TaskResponse mapToResponse(Task task) {
@@ -51,21 +47,10 @@ public class TaskController {
     return response;
   }
 
-  // working
   @PostMapping
   @PreAuthorize("#request.getUserId() == authentication.principal.getUserId() or hasRole('ADMIN')")
   public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest request) {
-    User user = userService.getUserById(request.getUserId());
-
-    Task task = new Task();
-    task.setAssignedUser(user);
-    task.setTitle(request.getTitle());
-    task.setDescription(request.getDescription());
-    task.setDueDate(request.getDueDate());
-    task.setCompleted(false);
-
-    Task savedTask = taskService.createTask(task);
-    TaskResponse response = mapToResponse(savedTask);
+    TaskResponse response = taskService.createTask(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 

@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.anurag.task_flow.dto.request.TaskRequest;
 import com.anurag.task_flow.dto.request.TaskUpdateRequest;
+import com.anurag.task_flow.dto.response.TaskResponse;
 import com.anurag.task_flow.entity.Task;
 import com.anurag.task_flow.security.CustomUserDetails;
 
 public interface TaskService {
-  Task createTask(Task task);
+  TaskResponse createTask(TaskRequest taskReq);
 
   Task getTaskById(Long id);
 
