@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anurag.task_flow.dto.request.UserRequest;
 import com.anurag.task_flow.dto.response.UserResponse;
-import com.anurag.task_flow.entity.Role;
 import com.anurag.task_flow.entity.User;
 import com.anurag.task_flow.service.UserService;
 
@@ -40,18 +39,11 @@ public class UserController {
     return response;
   }
 
-  // working
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
-    User user = new User();
-    user.setName(request.getName());
-    user.setEmail(request.getEmail());
-    user.setRole(Role.ROLE_USER);
-
-    User savedUser = userService.createUser(user);
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(mapToUserResponse(savedUser));
+    UserResponse savedUser = userService.createUser(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
   }
 
   // working

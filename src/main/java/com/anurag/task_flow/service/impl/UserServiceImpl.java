@@ -7,7 +7,10 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.anurag.task_flow.dto.request.UserRequest;
+import com.anurag.task_flow.dto.response.UserResponse;
 import com.anurag.task_flow.entity.PasswordSetupToken;
+import com.anurag.task_flow.entity.Role;
 import com.anurag.task_flow.entity.User;
 import com.anurag.task_flow.exception.BadRequestException;
 import com.anurag.task_flow.exception.ResourceNotFoundException;
@@ -28,6 +31,14 @@ public class UserServiceImpl implements UserService {
     this.passwordSetupTokenRepository = passwordSetupTokenRepository;
   }
 
+  private UserResponse mapToUserResponse(User user) {
+    UserResponse response = new UserResponse();
+    response.setEmail(user.getEmail());
+    response.setName(user.getName());
+    response.setId(user.getId());
+    return response;
+  }
+
   private void generateToken(User savedUser) {
     PasswordSetupToken passwordSetupToken = passwordSetupTokenRepository.findByUser(savedUser)
         .orElse(new PasswordSetupToken());
@@ -44,9 +55,9 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User createUser(User user) {
+  public UserResponse createUser(UserRequest userReq) {
 
-    Optional<User> isUserExisting = userRepository.findByEmail(user.getEmail());
+    Optional<User> isUserExisting = userRepository.findByEmail(userReq.getEmail());
 
     if (isUserExisting.isPresent()) {
       User existingUser = isUserExisting.get();
@@ -54,12 +65,15 @@ public class UserServiceImpl implements UserService {
         throw new BadRequestException("Email already exists");
       }
       generateToken(existingUser);
-      return existingUser;
+      return mapToUserResponse(existingUser);
     }
-
+    User user = new User();
+    user.setEmail(userReq.getEmail());
+    user.setName(userReq.getName());
+    user.setRole(Role.ROLE_USER);
     User savedUser = userRepository.save(user);
     generateToken(savedUser);
-    return savedUser;
+    return mapToUserResponse(savedUser);
   }
 
   @Override

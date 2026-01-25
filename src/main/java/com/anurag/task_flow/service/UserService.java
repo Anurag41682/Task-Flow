@@ -2,10 +2,12 @@ package com.anurag.task_flow.service;
 
 import java.util.List;
 
+import com.anurag.task_flow.dto.request.UserRequest;
+import com.anurag.task_flow.dto.response.UserResponse;
 import com.anurag.task_flow.entity.User;
 
 public interface UserService {
-  User createUser(User user);
+  UserResponse createUser(UserRequest userReq);
 
   List<User> getAllUsers();
 

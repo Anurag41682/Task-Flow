@@ -13,6 +13,8 @@ import com.anurag.task_flow.dto.request.SignupRequest;
 import com.anurag.task_flow.dto.response.JwtResponse;
 import com.anurag.task_flow.service.AuthService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -36,7 +38,7 @@ public class AuthController {
   }
 
   @PostMapping("/set-password")
-  ResponseEntity<String> setPassword(@RequestParam String token, @RequestBody SetPasswordRequest request) {
+  ResponseEntity<String> setPassword(@RequestParam String token, @Valid @RequestBody SetPasswordRequest request) {
     authService.setPassword(token, request);
     return ResponseEntity.ok("Password set successfully");
   }
