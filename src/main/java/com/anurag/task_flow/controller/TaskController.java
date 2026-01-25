@@ -1,6 +1,5 @@
 package com.anurag.task_flow.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -61,13 +60,10 @@ public class TaskController {
     return ResponseEntity.ok(response);
   }
 
-  // working
   @PatchMapping("/{id}/status")
   public ResponseEntity<TaskResponse> toggleStatus(@PathVariable Long id, Authentication authentication) {
-
-    CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
-    Task updatedTask = taskService.toggleTask(id, currentUser);
-    return ResponseEntity.ok(mapToResponse(updatedTask));
+    TaskResponse response = taskService.toggleTask(id);
+    return ResponseEntity.ok(response);
   }
 
   // working

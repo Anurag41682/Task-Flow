@@ -14,11 +14,11 @@ import com.anurag.task_flow.security.CustomUserDetails;
 public interface TaskService {
   TaskResponse createTask(TaskRequest taskReq);
 
-  Task getTaskById(Long id);
+  // Task getTaskById(Long id);
 
   List<TaskResponse> getAllTasks();
 
-  Task toggleTask(Long id, CustomUserDetails customUserDetails);
+  TaskResponse toggleTask(Long id);
 
   Page<Task> getTasksByUser(Long id, Pageable pageable);
 

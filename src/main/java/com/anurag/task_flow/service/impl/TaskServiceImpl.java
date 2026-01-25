@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.anurag.task_flow.dto.request.TaskRequest;
@@ -65,22 +67,21 @@ public class TaskServiceImpl implements TaskService {
     return response;
   }
 
-  public Task getTaskById(Long id) {
-    return taskRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Task not found with Id: " + id));
-  }
-
   @Override
-  public Task toggleTask(Long id, CustomUserDetails currentUser) {
+  public TaskResponse toggleTask(Long id) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
     Task foundTask = taskRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
-    boolean isSameUser = currentUser.getUserId().equals(foundTask.getAssignedUser().getId());
-    boolean isAdmin = currentUser.getRole().name().equals("ROLE_ADMIN");
+    boolean isSameUser = userDetails.getUserId().equals(foundTask.getAssignedUser().getId());
+    boolean isAdmin = userDetails.getRole().name().equals("ROLE_ADMIN");
     if (!isSameUser && !isAdmin) {
       throw new AuthorizationDeniedException("Access Denied");
     }
     foundTask.setCompleted(!foundTask.isCompleted());
-    return taskRepository.save(foundTask);
+    Task savedTask = taskRepository.save(foundTask);
+    return mapToResponse(savedTask);
   }
 
   @Override
