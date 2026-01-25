@@ -2,7 +2,6 @@ package com.anurag.task_flow.controller;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,19 +59,17 @@ public class TaskController {
     return ResponseEntity.ok(response);
   }
 
-  @PatchMapping("/{id}/status")
-  public ResponseEntity<TaskResponse> toggleStatus(@PathVariable Long id, Authentication authentication) {
-    TaskResponse response = taskService.toggleTask(id);
+  @PatchMapping("/{taskId}/status")
+  public ResponseEntity<TaskResponse> toggleStatus(@PathVariable Long taskId, Authentication authentication) {
+    TaskResponse response = taskService.toggleTask(taskId);
     return ResponseEntity.ok(response);
   }
 
-  // working
-  @GetMapping("/{id}")
-  @PreAuthorize("#id == authentication.principal.getUserId() or hasRole('ADMIN')")
-  public ResponseEntity<List<TaskResponse>> getTasksByUser(@PathVariable Long id, Pageable pageable) {
-    Page<Task> pageContent = taskService.getTasksByUser(id, pageable);
-    List<TaskResponse> tasks = pageContent.getContent().stream().map((ele) -> mapToResponse(ele)).toList();
-    return ResponseEntity.ok(tasks);
+  @GetMapping("/{userId}")
+  @PreAuthorize("#userId == authentication.principal.getUserId() or hasRole('ADMIN')")
+  public ResponseEntity<List<TaskResponse>> getTasksByUser(@PathVariable Long userId, Pageable pageable) {
+    List<TaskResponse> response = taskService.getTasksByUser(userId, pageable);
+    return ResponseEntity.ok(response);
   }
 
   // working

@@ -68,12 +68,12 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public TaskResponse toggleTask(Long id) {
+  public TaskResponse toggleTask(Long taskId) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
 
-    Task foundTask = taskRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+    Task foundTask = taskRepository.findById(taskId)
+        .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
     boolean isSameUser = userDetails.getUserId().equals(foundTask.getAssignedUser().getId());
     boolean isAdmin = userDetails.getRole().name().equals("ROLE_ADMIN");
     if (!isSameUser && !isAdmin) {
@@ -85,9 +85,10 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public Page<Task> getTasksByUser(Long id, Pageable page) {
-    Page<Task> tasks = taskRepository.findByAssignedUserId(id, page);
-    return tasks;
+  public List<TaskResponse> getTasksByUser(Long userId, Pageable page) {
+    Page<Task> tasks = taskRepository.findByAssignedUserId(userId, page);
+    List<TaskResponse> tasksRes = tasks.getContent().stream().map(ele -> mapToResponse(ele)).toList();
+    return tasksRes;
   }
 
   @Override
