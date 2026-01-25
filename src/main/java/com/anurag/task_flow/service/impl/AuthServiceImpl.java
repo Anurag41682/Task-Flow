@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.anurag.task_flow.dto.request.SetPasswordRequest;
+import com.anurag.task_flow.dto.request.SignupRequest;
+import com.anurag.task_flow.dto.request.UserRequest;
 import com.anurag.task_flow.entity.PasswordSetupToken;
 import com.anurag.task_flow.entity.Role;
 import com.anurag.task_flow.entity.User;
@@ -40,18 +42,19 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public void signup(User user) {
+  public void signup(SignupRequest signupReq) {
 
-    userRepository.findByEmail(user.getEmail()).ifPresent(element -> {
+    userRepository.findByEmail(signupReq.getEmail()).ifPresent(element -> {
       throw new BadRequestException("Email already exists");
     });
-
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    User user = new User();
+    user.setName(signupReq.getName());
+    user.setEmail(signupReq.getEmail());
+    user.setEnabled(true);
+    user.setPassword(passwordEncoder.encode(signupReq.getPassword()));
     user.setRole(Role.ROLE_USER);
     userRepository.save(user);
   }
-
-  // while login with incorrect password error not showing in client side
 
   @Override
   public AuthResult login(User user) {

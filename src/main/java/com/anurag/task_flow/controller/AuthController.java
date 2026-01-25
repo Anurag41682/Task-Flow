@@ -25,17 +25,10 @@ public class AuthController {
     this.authService = authService;
   }
 
-  // working
   @PostMapping("/signup")
-  ResponseEntity<Void> Signup(@RequestBody SignupRequest request) {
-
-    User user = new User();
-    user.setName(request.getName());
-    user.setEmail(request.getEmail());
-    user.setPassword(request.getPassword());
-    user.setEnabled(true);
-    authService.signup(user);
-    return ResponseEntity.ok(null);
+  ResponseEntity<String> Signup(@RequestBody SignupRequest request) {
+    authService.signup(request);
+    return ResponseEntity.ok("User created successfully");
   }
 
   // working
