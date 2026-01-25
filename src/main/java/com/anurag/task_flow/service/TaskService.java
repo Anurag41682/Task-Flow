@@ -15,9 +15,9 @@ public interface TaskService {
 
   List<TaskResponse> getAllTasks();
 
-  TaskResponse toggleTask(Long id);
+  TaskResponse toggleTask(Long taskId);
 
-  List<TaskResponse> getTasksByUser(Long id, Pageable pageable);
+  List<TaskResponse> getTasksByUser(Long userId, Pageable pageable);
 
   Task updateTask(Long taskId, TaskUpdateRequest updatedTask, CustomUserDetails customUserDetails);
 
