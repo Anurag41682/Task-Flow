@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class TaskUpdateRequest {
   String title;
-  String descrption;
+  String description;
   LocalDate dueDate;
 }

@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.anurag.task_flow.dto.request.TaskUpdateRequest;
 import com.anurag.task_flow.entity.Task;
+import com.anurag.task_flow.security.CustomUserDetails;
 
 public interface TaskService {
   Task createTask(Task task);
@@ -14,10 +16,10 @@ public interface TaskService {
 
   List<Task> getAllTasks();
 
-  Task toggleTask(Long id);
+  Task toggleTask(Long id, CustomUserDetails customUserDetails);
 
   Page<Task> getTasksByUser(Long id, Pageable pageable);
 
-  Task updateTask(Task updatedTask);
+  Task updateTask(Long taskId, TaskUpdateRequest updatedTask, CustomUserDetails customUserDetails);
 
 }

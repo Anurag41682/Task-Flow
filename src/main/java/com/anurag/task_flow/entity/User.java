@@ -2,6 +2,8 @@ package com.anurag.task_flow.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,5 +27,13 @@ public class User {
   // makes sure email are unique from the db side otherwise throws error
   @Column(unique = true)
   private String email;
+
+  private String password;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Role role;
+
+  private boolean enabled = false;
 
 }
