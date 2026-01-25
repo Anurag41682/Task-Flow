@@ -22,7 +22,6 @@ import com.anurag.task_flow.dto.request.TaskUpdateRequest;
 import com.anurag.task_flow.dto.response.TaskResponse;
 import com.anurag.task_flow.entity.Task;
 import com.anurag.task_flow.entity.User;
-import com.anurag.task_flow.exception.BadRequestException;
 import com.anurag.task_flow.security.CustomUserDetails;
 import com.anurag.task_flow.service.TaskService;
 import com.anurag.task_flow.service.UserService;
