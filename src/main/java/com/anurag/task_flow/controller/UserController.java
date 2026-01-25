@@ -1,6 +1,5 @@
 package com.anurag.task_flow.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -46,14 +45,10 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
   }
 
-  // working
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<List<UserResponse>> getAllUser() {
-    List<User> allUser = userService.getAllUsers();
-    List<UserResponse> response = new ArrayList<>();
-
-    allUser.forEach(element -> response.add(mapToUserResponse(element)));
+    List<UserResponse> response = userService.getAllUsers();
     return ResponseEntity.ok(response);
   }
 

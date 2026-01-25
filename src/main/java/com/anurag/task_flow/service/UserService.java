@@ -9,7 +9,7 @@ import com.anurag.task_flow.entity.User;
 public interface UserService {
   UserResponse createUser(UserRequest userReq);
 
-  List<User> getAllUsers();
+  List<UserResponse> getAllUsers();
 
   User getUserById(Long id);
 
