@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.anurag.task_flow.dto.request.UserRequest;
@@ -77,9 +79,9 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<UserResponse> getAllUsers() {
-    List<User> users = userRepository.findAll();
-    List<UserResponse> response = users.stream().map(ele -> mapToUserResponse(ele)).toList();
+  public List<UserResponse> getAllUsers(Pageable pageable) {
+    Page<User> users = userRepository.findAll(pageable);
+    List<UserResponse> response = users.getContent().stream().map(ele -> mapToUserResponse(ele)).toList();
     return response;
   }
 
