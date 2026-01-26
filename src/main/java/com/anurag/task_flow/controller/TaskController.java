@@ -40,8 +40,8 @@ public class TaskController {
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<List<TaskResponse>> getAllTask() {
-    List<TaskResponse> response = taskService.getAllTasks();
+  public ResponseEntity<List<TaskResponse>> getAllTask(Pageable pageable) {
+    List<TaskResponse> response = taskService.getAllTasks(pageable);
     return ResponseEntity.ok(response);
   }
 

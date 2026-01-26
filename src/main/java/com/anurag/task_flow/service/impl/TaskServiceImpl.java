@@ -61,9 +61,9 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public List<TaskResponse> getAllTasks() {
-    List<Task> tasks = taskRepository.findAll();
-    List<TaskResponse> response = tasks.stream().map(ele -> mapToResponse(ele)).toList();
+  public List<TaskResponse> getAllTasks(Pageable pageable) {
+    Page<Task> tasks = taskRepository.findAll(pageable);
+    List<TaskResponse> response = tasks.getContent().stream().map(ele -> mapToResponse(ele)).toList();
     return response;
   }
 
@@ -85,8 +85,8 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public List<TaskResponse> getTasksByUser(Long userId, Pageable page) {
-    Page<Task> tasks = taskRepository.findByAssignedUserId(userId, page);
+  public List<TaskResponse> getTasksByUser(Long userId, Pageable pageable) {
+    Page<Task> tasks = taskRepository.findByAssignedUserId(userId, pageable);
     List<TaskResponse> tasksRes = tasks.getContent().stream().map(ele -> mapToResponse(ele)).toList();
     return tasksRes;
   }

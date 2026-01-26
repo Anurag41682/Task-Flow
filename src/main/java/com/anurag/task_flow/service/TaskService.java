@@ -11,7 +11,7 @@ import com.anurag.task_flow.dto.response.TaskResponse;
 public interface TaskService {
   TaskResponse createTask(TaskRequest taskReq);
 
-  List<TaskResponse> getAllTasks();
+  List<TaskResponse> getAllTasks(Pageable pageable);
 
   TaskResponse toggleTask(Long taskId);
 
