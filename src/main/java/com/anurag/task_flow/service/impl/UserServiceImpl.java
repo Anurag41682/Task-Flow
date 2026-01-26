@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +81,10 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<UserResponse> getAllUsers(Pageable pageable) {
-    Page<User> users = userRepository.findAll(pageable);
+
+    Pageable safePageable = PageRequest.of(pageable.getPageNumber(), Math.min(pageable.getPageSize(), 10));
+
+    Page<User> users = userRepository.findAll(safePageable);
     List<UserResponse> response = users.getContent().stream().map(ele -> mapToUserResponse(ele)).toList();
     return response;
   }

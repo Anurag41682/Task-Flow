@@ -3,6 +3,7 @@ package com.anurag.task_flow.service.impl;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
@@ -62,7 +63,10 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   public List<TaskResponse> getAllTasks(Pageable pageable) {
-    Page<Task> tasks = taskRepository.findAll(pageable);
+
+    Pageable safePageable = PageRequest.of(pageable.getPageNumber(), Math.min(pageable.getPageSize(), 10));
+
+    Page<Task> tasks = taskRepository.findAll(safePageable);
     List<TaskResponse> response = tasks.getContent().stream().map(ele -> mapToResponse(ele)).toList();
     return response;
   }
@@ -86,7 +90,10 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   public List<TaskResponse> getTasksByUser(Long userId, Pageable pageable) {
-    Page<Task> tasks = taskRepository.findByAssignedUserId(userId, pageable);
+
+    Pageable safePageable = PageRequest.of(pageable.getPageNumber(), Math.min(pageable.getPageSize(), 10));
+
+    Page<Task> tasks = taskRepository.findByAssignedUserId(userId, safePageable);
     List<TaskResponse> tasksRes = tasks.getContent().stream().map(ele -> mapToResponse(ele)).toList();
     return tasksRes;
   }
