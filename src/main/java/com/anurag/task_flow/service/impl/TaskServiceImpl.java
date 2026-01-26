@@ -92,9 +92,11 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public Task updateTask(Long taskId, TaskUpdateRequest updatedTaskReq, CustomUserDetails currentUser) {
+  public TaskResponse updateTask(Long taskId, TaskUpdateRequest updatedTaskReq) {
     Task updatedTask = taskRepository.findById(taskId)
         .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    CustomUserDetails currentUser = (CustomUserDetails) auth.getPrincipal();
     boolean isSameUser = currentUser.getUserId().equals(updatedTask.getAssignedUser().getId());
     boolean isAdmin = currentUser.getRole().name().equals("ROLE_ADMIN");
 
@@ -114,7 +116,7 @@ public class TaskServiceImpl implements TaskService {
     if (updatedTaskReq.getDueDate() != null) {
       updatedTask.setDueDate(updatedTaskReq.getDueDate());
     }
-    return taskRepository.save(updatedTask);
+    return mapToResponse(taskRepository.save(updatedTask));
   }
 
 }

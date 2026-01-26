@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.anurag.task_flow.dto.request.TaskRequest;
 import com.anurag.task_flow.dto.request.TaskUpdateRequest;
 import com.anurag.task_flow.dto.response.TaskResponse;
-import com.anurag.task_flow.entity.Task;
-import com.anurag.task_flow.security.CustomUserDetails;
 import com.anurag.task_flow.service.TaskService;
 
 import jakarta.validation.Valid;
@@ -31,18 +29,6 @@ public class TaskController {
 
   public TaskController(TaskService taskService) {
     this.taskService = taskService;
-  }
-
-  private TaskResponse mapToResponse(Task task) {
-    TaskResponse response = new TaskResponse();
-    response.setId(task.getId());
-    response.setTitle(task.getTitle());
-    response.setDescription(task.getDescription());
-    response.setCompleted(task.isCompleted());
-    response.setUserId(task.getAssignedUser().getId());
-    response.setStatus(task.isCompleted() ? "DONE" : "PENDING");
-    response.setDueDate(task.getDueDate());
-    return response;
   }
 
   @PostMapping
@@ -72,12 +58,10 @@ public class TaskController {
     return ResponseEntity.ok(response);
   }
 
-  // working
   @PatchMapping("/{taskId}")
   public ResponseEntity<TaskResponse> updateTask(@PathVariable Long taskId,
-      @RequestBody TaskUpdateRequest updatedTaskReq, Authentication authentication) {
-    CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
-    Task response = taskService.updateTask(taskId, updatedTaskReq, currentUser);
-    return ResponseEntity.ok(mapToResponse(response));
+      @RequestBody TaskUpdateRequest updatedTaskReq) {
+    TaskResponse response = taskService.updateTask(taskId, updatedTaskReq);
+    return ResponseEntity.ok(response);
   }
 }
