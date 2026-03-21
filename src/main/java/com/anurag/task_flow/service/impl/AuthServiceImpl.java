@@ -58,8 +58,9 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public JwtResponse login(LoginRequest loginReq) {
+
     // This line does authentication automatically without matching password
-    // manually
+    // manually by us internally it matches password
     Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(loginReq.getEmail(), loginReq.getPassword()));
 
