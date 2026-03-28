@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anurag.task_flow.dto.request.TaskRequest;
 import com.anurag.task_flow.dto.request.TaskUpdateRequest;
+import com.anurag.task_flow.dto.response.PageResponse;
 import com.anurag.task_flow.dto.response.TaskResponse;
 import com.anurag.task_flow.service.TaskService;
 
@@ -40,8 +42,8 @@ public class TaskController {
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<List<TaskResponse>> getAllTask(Pageable pageable) {
-    List<TaskResponse> response = taskService.getAllTasks(pageable);
+  public ResponseEntity<PageResponse<TaskResponse>> getAllTask(Pageable pageable) {
+    PageResponse<TaskResponse> response = taskService.getAllTasks(pageable);
     return ResponseEntity.ok(response);
   }
 
@@ -64,4 +66,13 @@ public class TaskController {
     TaskResponse response = taskService.updateTask(taskId, updatedTaskReq);
     return ResponseEntity.ok(response);
   }
+
+  @DeleteMapping("/{taskId}")
+  public ResponseEntity<?> deleteTask(@PathVariable Long taskId) {
+    taskService.deleteTask(taskId);
+    return ResponseEntity.noContent().build();
+  }
+
+  // get task by taskId should also be there
+
 }
