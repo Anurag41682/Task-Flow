@@ -25,12 +25,6 @@ public class AuthController {
     this.authService = authService;
   }
 
-  @PostMapping("/signup")
-  ResponseEntity<String> Signup(@RequestBody SignupRequest request) {
-    authService.signup(request);
-    return ResponseEntity.ok("User created successfully");
-  }
-
   @PostMapping("/login")
   ResponseEntity<JwtResponse> Login(@RequestBody LoginRequest request) {
     JwtResponse res = authService.login(request);
