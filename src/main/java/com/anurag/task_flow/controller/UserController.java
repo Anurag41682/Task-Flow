@@ -39,8 +39,15 @@ public class UserController {
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<List<UserResponse>> getAllUser(Pageable pageable) {
-    List<UserResponse> response = userService.getAllUsers(pageable);
+  public ResponseEntity<List<UserResponse>> getAllUserPaginated(Pageable pageable) {
+    List<UserResponse> response = userService.getAllUsersPaginated(pageable);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/all")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<List<UserResponse>> getAllUser() {
+    List<UserResponse> response = userService.getAllUsers();
     return ResponseEntity.ok(response);
   }
 
