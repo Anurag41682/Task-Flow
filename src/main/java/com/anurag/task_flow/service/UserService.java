@@ -10,7 +10,9 @@ import com.anurag.task_flow.dto.response.UserResponse;
 public interface UserService {
   UserResponse createUser(UserRequest userReq);
 
-  List<UserResponse> getAllUsers(Pageable pageable);
+  List<UserResponse> getAllUsersPaginated(Pageable pageable);
+
+  List<UserResponse> getAllUsers();
 
   UserResponse getUserById(Long id);
 

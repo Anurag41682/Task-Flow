@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.anurag.task_flow.dto.request.TaskRequest;
 import com.anurag.task_flow.dto.request.TaskUpdateRequest;
+import com.anurag.task_flow.dto.response.PageResponse;
 import com.anurag.task_flow.dto.response.TaskResponse;
 import com.anurag.task_flow.entity.Task;
 import com.anurag.task_flow.entity.User;
@@ -43,6 +44,7 @@ public class TaskServiceImpl implements TaskService {
     response.setUserId(task.getAssignedUser().getId());
     response.setStatus(task.isCompleted() ? "DONE" : "PENDING");
     response.setDueDate(task.getDueDate());
+    response.setUserName(task.getAssignedUser().getName());
     return response;
   }
 
@@ -62,13 +64,14 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public List<TaskResponse> getAllTasks(Pageable pageable) {
+  public PageResponse<TaskResponse> getAllTasks(Pageable pageable) {
 
     Pageable safePageable = PageRequest.of(pageable.getPageNumber(), Math.min(pageable.getPageSize(), 10));
 
     Page<Task> tasks = taskRepository.findAll(safePageable);
-    List<TaskResponse> response = tasks.getContent().stream().map(ele -> mapToResponse(ele)).toList();
-    return response;
+
+    List<TaskResponse> content = tasks.getContent().stream().map(ele -> mapToResponse(ele)).toList();
+    return new PageResponse<TaskResponse>(content, tasks.getTotalPages(), tasks.getTotalElements(), tasks.getNumber());
   }
 
   @Override
@@ -106,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
     CustomUserDetails currentUser = (CustomUserDetails) auth.getPrincipal();
     boolean isSameUser = currentUser.getUserId().equals(updatedTask.getAssignedUser().getId());
     boolean isAdmin = currentUser.getRole().name().equals("ROLE_ADMIN");
-
+    System.out.println("hi");
     if (!isSameUser && !isAdmin) {
       throw new AuthorizationDeniedException("Access Denied");
     }
@@ -124,6 +127,24 @@ public class TaskServiceImpl implements TaskService {
       updatedTask.setDueDate(updatedTaskReq.getDueDate());
     }
     return mapToResponse(taskRepository.save(updatedTask));
+  }
+
+  @Override
+  public void deleteTask(Long taskId) {
+    Task task = taskRepository.findById(taskId)
+        .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+    boolean isSameUser = userDetails.getUserId().equals(task.getAssignedUser().getId());
+    boolean isAdmin = userDetails.getRole().name().equals("ROLE_ADMIN");
+
+    if (!isSameUser && !isAdmin) {
+      throw new AuthorizationDeniedException("Access Denied");
+    }
+
+    taskRepository.delete(task);
   }
 
 }

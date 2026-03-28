@@ -19,6 +19,7 @@ import com.anurag.task_flow.exception.BadRequestException;
 import com.anurag.task_flow.exception.ResourceNotFoundException;
 import com.anurag.task_flow.repository.PasswordSetupTokenRepository;
 import com.anurag.task_flow.repository.UserRepository;
+import com.anurag.task_flow.service.EmailService;
 import com.anurag.task_flow.service.UserService;
 
 @Service
@@ -26,12 +27,15 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordSetupTokenRepository passwordSetupTokenRepository;
+  private final EmailService emailService;
 
-  public UserServiceImpl(UserRepository userRepository, PasswordSetupTokenRepository passwordSetupTokenRepository) {
+  public UserServiceImpl(UserRepository userRepository, PasswordSetupTokenRepository passwordSetupTokenRepository,
+      EmailService emailService) {
     // userRepository bean injected here without autowired because only one
     // constructor is there
     this.userRepository = userRepository;
     this.passwordSetupTokenRepository = passwordSetupTokenRepository;
+    this.emailService = emailService;
   }
 
   private UserResponse mapToUserResponse(User user) {
@@ -52,9 +56,14 @@ public class UserServiceImpl implements UserService {
 
     passwordSetupTokenRepository.save(passwordSetupToken);
 
-    System.out.println(
-        "Password setup link: http://localhost:8080/api/auth/set-password?token="
-            + passwordSetupToken.getToken());
+    // System.out.println(
+    // "Password setup link: http://localhost:5173/auth/set-password?token="
+    // + passwordSetupToken.getToken());
+
+    String link = "http://localhost:5173/auth/set-password?token="
+        + passwordSetupToken.getToken();
+
+    emailService.sendSetPasswordEmail(savedUser.getEmail(), link);
   }
 
   @Override
@@ -80,12 +89,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<UserResponse> getAllUsers(Pageable pageable) {
+  public List<UserResponse> getAllUsersPaginated(Pageable pageable) {
 
     Pageable safePageable = PageRequest.of(pageable.getPageNumber(), Math.min(pageable.getPageSize(), 10));
 
-    Page<User> users = userRepository.findAll(safePageable);
+    Page<User> users = userRepository.findByEnabledTrue(safePageable);
     List<UserResponse> response = users.getContent().stream().map(ele -> mapToUserResponse(ele)).toList();
+    return response;
+  }
+
+  @Override
+  public List<UserResponse> getAllUsers() {
+    List<User> users = userRepository.findByEnabledTrue();
+    List<UserResponse> response = users.stream().map((ele) -> mapToUserResponse(ele)).toList();
     return response;
   }
 
