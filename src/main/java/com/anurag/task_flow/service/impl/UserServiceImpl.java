@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     // "Password setup link: http://localhost:5173/auth/set-password?token="
     // + passwordSetupToken.getToken());
 
-    String link = baseURL + "/set-password?token="
+    String link = baseURL + "/auth/set-password?token="
         + passwordSetupToken.getToken();
 
     emailService.sendSetPasswordEmail(savedUser.getEmail(), link);
