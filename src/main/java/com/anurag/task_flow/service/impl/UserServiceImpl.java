@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,9 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordSetupTokenRepository passwordSetupTokenRepository;
   private final EmailService emailService;
+
+  @Value("${allowed.origins}")
+  private String baseURL;
 
   public UserServiceImpl(UserRepository userRepository, PasswordSetupTokenRepository passwordSetupTokenRepository,
       EmailService emailService) {
@@ -60,7 +64,7 @@ public class UserServiceImpl implements UserService {
     // "Password setup link: http://localhost:5173/auth/set-password?token="
     // + passwordSetupToken.getToken());
 
-    String link = "http://localhost:5173/auth/set-password?token="
+    String link = baseURL + "set-password?token="
         + passwordSetupToken.getToken();
 
     emailService.sendSetPasswordEmail(savedUser.getEmail(), link);
