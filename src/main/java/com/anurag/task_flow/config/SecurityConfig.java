@@ -2,6 +2,7 @@ package com.anurag.task_flow.config;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +29,9 @@ public class SecurityConfig {
   private final CustomAuthEntryPoint customAuthEntryPoint;
   private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
+  @Value("${allowed.origins}")
+  private String allowedOrigins;
+
   public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, CustomAuthEntryPoint customAuthEntryPoint,
       CustomAccessDeniedHandler customAccessDeniedHandler) {
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -40,7 +44,7 @@ public class SecurityConfig {
 
     http.cors(cors -> cors.configurationSource(request -> {
       CorsConfiguration config = new CorsConfiguration();
-      config.setAllowedOrigins(List.of("http://localhost:5173"));
+      config.setAllowedOrigins(List.of(allowedOrigins));
       config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
       config.setAllowedHeaders(List.of("*"));
       config.setAllowCredentials(true);
