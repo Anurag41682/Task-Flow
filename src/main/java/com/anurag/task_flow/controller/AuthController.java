@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anurag.task_flow.dto.request.LoginRequest;
 import com.anurag.task_flow.dto.request.SetPasswordRequest;
-import com.anurag.task_flow.dto.request.SignupRequest;
+
 import com.anurag.task_flow.dto.response.JwtResponse;
 import com.anurag.task_flow.service.AuthService;
 
