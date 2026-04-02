@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.anurag.task_flow.service.EmailService;
 
+import javax.net.ssl.SSLContext;
+import java.time.Duration;
+
 @Service
 public class EmailServiceImpl implements EmailService {
 
@@ -18,6 +21,9 @@ public class EmailServiceImpl implements EmailService {
 
   public void sendSetPasswordEmail(String toEmail, String link) {
     try {
+      // Log to verify key is loaded
+      System.out.println("Using Resend key: " + (resendApiKey != null ? resendApiKey.substring(0, 6) + "..." : "NULL"));
+
       String body = """
           {
             "from": "noreply@agnomerf.store",
@@ -27,7 +33,15 @@ public class EmailServiceImpl implements EmailService {
           }
           """.formatted(toEmail, link);
 
-      HttpClient client = HttpClient.newHttpClient();
+      // Force TLS 1.2
+      SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+      sslContext.init(null, null, null);
+
+      HttpClient client = HttpClient.newBuilder()
+          .sslContext(sslContext)
+          .connectTimeout(Duration.ofSeconds(10))
+          .build();
+
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create("https://api.resend.com/emails"))
           .header("Authorization", "Bearer " + resendApiKey)
@@ -36,10 +50,11 @@ public class EmailServiceImpl implements EmailService {
           .build();
 
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-      System.out.println("Resend response: " + response.body());
+      System.out.println("Resend response: " + response.statusCode() + " " + response.body());
 
     } catch (Exception e) {
       System.out.println("Email error: " + e.getMessage());
+      e.printStackTrace(); // Full stack trace
     }
   }
 }
