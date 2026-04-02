@@ -21,8 +21,6 @@ public class EmailServiceImpl implements EmailService {
 
   public void sendSetPasswordEmail(String toEmail, String link) {
     try {
-      // Log to verify key is loaded
-      System.out.println("Using Resend key: " + (resendApiKey != null ? resendApiKey.substring(0, 6) + "..." : "NULL"));
 
       String body = """
           {
@@ -33,7 +31,6 @@ public class EmailServiceImpl implements EmailService {
           }
           """.formatted(toEmail, link);
 
-      // Force TLS 1.2
       SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
       sslContext.init(null, null, null);
 
@@ -49,12 +46,11 @@ public class EmailServiceImpl implements EmailService {
           .POST(HttpRequest.BodyPublishers.ofString(body))
           .build();
 
-      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-      System.out.println("Resend response: " + response.statusCode() + " " + response.body());
+      client.send(request, HttpResponse.BodyHandlers.ofString());
 
     } catch (Exception e) {
       System.out.println("Email error: " + e.getMessage());
-      e.printStackTrace(); // Full stack trace
+      e.printStackTrace();
     }
   }
 }

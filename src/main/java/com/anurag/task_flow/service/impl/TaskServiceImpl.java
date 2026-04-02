@@ -126,6 +126,11 @@ public class TaskServiceImpl implements TaskService {
     if (updatedTaskReq.getDueDate() != null) {
       updatedTask.setDueDate(updatedTaskReq.getDueDate());
     }
+    if (updatedTaskReq.getUserId() != null) {
+      User newUser = userRepository.findById(updatedTaskReq.getUserId())
+          .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + updatedTaskReq.getUserId()));
+      updatedTask.setAssignedUser(newUser);
+    }
     return mapToResponse(taskRepository.save(updatedTask));
   }
 

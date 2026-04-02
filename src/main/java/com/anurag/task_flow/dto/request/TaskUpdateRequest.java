@@ -9,4 +9,5 @@ public class TaskUpdateRequest {
   String title;
   String description;
   LocalDate dueDate;
+  Long userId;
 }
