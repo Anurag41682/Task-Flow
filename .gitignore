@@ -39,3 +39,4 @@ postman
 
 ###
 application.properties
+application-prod.properties
